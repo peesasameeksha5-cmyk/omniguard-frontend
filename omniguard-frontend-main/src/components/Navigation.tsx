@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ChevronDown, Menu, X, Shield, ArrowRight } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ChevronDown, Menu, X, Shield, ArrowRight, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface MegaMenuSection {
   label: string;
@@ -116,6 +117,8 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -229,9 +232,28 @@ export default function Navigation() {
               <Link to="/contact" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
                 Contact Sales
               </Link>
-              <Link to="/book-demo" className="btn-primary text-xs px-4 py-2">
-                Book a Demo
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/app" className="btn-secondary text-xs px-4 py-2">
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={async () => { await signOut(); navigate('/'); }}
+                    className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                    Sign in
+                  </Link>
+                  <Link to="/book-demo" className="btn-primary text-xs px-4 py-2">
+                    Book a Demo
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile hamburger */}
@@ -281,9 +303,28 @@ export default function Navigation() {
                 <Link to="/contact" className="block px-3 py-2.5 text-sm font-medium text-gray-700 text-center border border-gray-300 rounded">
                   Contact Sales
                 </Link>
-                <Link to="/book-demo" className="btn-primary w-full justify-center text-sm">
-                  Book a Demo <ArrowRight size={14} />
-                </Link>
+                {user ? (
+                  <>
+                    <Link to="/app" className="btn-secondary w-full justify-center text-sm">
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={async () => { await signOut(); navigate('/'); }}
+                      className="flex items-center justify-center gap-1.5 w-full px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      <LogOut size={14} /> Sign out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" className="block px-3 py-2.5 text-sm font-medium text-gray-700 text-center border border-gray-300 rounded">
+                      Sign in
+                    </Link>
+                    <Link to="/book-demo" className="btn-primary w-full justify-center text-sm">
+                      Book a Demo <ArrowRight size={14} />
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

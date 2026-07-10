@@ -33,6 +33,18 @@ import Support from './pages/Support';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 
+import { AuthProvider } from './context/AuthContext';
+import Login from './pages/auth/Login';
+import Signup from './pages/auth/Signup';
+import ProtectedRoute from './components/dashboard/ProtectedRoute';
+import DashboardLayout from './components/dashboard/DashboardLayout';
+import Overview from './pages/dashboard/Overview';
+import ArchitectureNexus from './pages/dashboard/ArchitectureNexus';
+import CloudDrift from './pages/dashboard/CloudDrift';
+import TeamManagement from './pages/dashboard/TeamManagement';
+import DeveloperApi from './pages/dashboard/DeveloperApi';
+import SbomCompliance from './pages/dashboard/SbomCompliance';
+
 function NotFound() {
   return (
     <div className="py-32 text-center">
@@ -46,58 +58,82 @@ function NotFound() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Layout>
+    <AuthProvider>
+      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* Auth routes (no Layout) */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-          {/* Platform */}
-          <Route path="/platform" element={<PlatformOverview />} />
-          <Route path="/platform/architecture-nexus" element={<SecureDesignGraph />} />
-          <Route path="/platform/security-engine" element={<SecurityEngine />} />
-          <Route path="/platform/ai-platform" element={<AIPlatform />} />
-          <Route path="/platform/policy-engine" element={<PolicyEngine />} />
-          <Route path="/platform/architecture" element={<PlatformArchitecture />} />
-          <Route path="/platform/threat-modeling" element={<ThreatModeling />} />
+          {/* Marketing/public routes (with Layout) */}
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
 
-          {/* Solutions */}
-          <Route path="/solutions" element={<Solutions />} />
-          <Route path="/solutions/threat-modeling" element={<ThreatModelingSolution />} />
-          <Route path="/solutions/secure-sdlc" element={<SecureSDLCSolution />} />
-          <Route path="/solutions/ai-security" element={<AISecuritySolution />} />
-          <Route path="/solutions/compliance" element={<ComplianceSolution />} />
-          <Route path="/solutions/cloud-security" element={<CloudSecuritySolution />} />
+            {/* Platform */}
+            <Route path="/platform" element={<PlatformOverview />} />
+            <Route path="/platform/architecture-nexus" element={<SecureDesignGraph />} />
+            <Route path="/platform/security-engine" element={<SecurityEngine />} />
+            <Route path="/platform/ai-platform" element={<AIPlatform />} />
+            <Route path="/platform/policy-engine" element={<PolicyEngine />} />
+            <Route path="/platform/architecture" element={<PlatformArchitecture />} />
+            <Route path="/platform/threat-modeling" element={<ThreatModeling />} />
 
-          {/* Developer Tools */}
-          <Route path="/cli" element={<CLI />} />
-          <Route path="/vscode" element={<VSCode />} />
-          <Route path="/mcp" element={<MCPPage />} />
+            {/* Solutions */}
+            <Route path="/solutions" element={<Solutions />} />
+            <Route path="/solutions/threat-modeling" element={<ThreatModelingSolution />} />
+            <Route path="/solutions/secure-sdlc" element={<SecureSDLCSolution />} />
+            <Route path="/solutions/ai-security" element={<AISecuritySolution />} />
+            <Route path="/solutions/compliance" element={<ComplianceSolution />} />
+            <Route path="/solutions/cloud-security" element={<CloudSecuritySolution />} />
 
-          {/* Other main pages */}
-          <Route path="/integrations" element={<Integrations />} />
-          <Route path="/enterprise" element={<Enterprise />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/docs" element={<Documentation />} />
-          <Route path="/docs/*" element={<Documentation />} />
+            {/* Developer Tools */}
+            <Route path="/cli" element={<CLI />} />
+            <Route path="/vscode" element={<VSCode />} />
+            <Route path="/mcp" element={<MCPPage />} />
 
-          {/* Company */}
-          <Route path="/about" element={<About />} />
-          <Route path="/careers" element={<Careers />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/book-demo" element={<BookDemo />} />
+            {/* Other main pages */}
+            <Route path="/integrations" element={<Integrations />} />
+            <Route path="/enterprise" element={<Enterprise />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/docs" element={<Documentation />} />
+            <Route path="/docs/*" element={<Documentation />} />
 
-          {/* Resources */}
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/support" element={<Support />} />
+            {/* Company */}
+            <Route path="/about" element={<About />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/book-demo" element={<BookDemo />} />
 
-          {/* Legal */}
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
+            {/* Resources */}
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/support" element={<Support />} />
 
-          <Route path="*" element={<NotFound />} />
+            {/* Legal */}
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+
+            <Route path="*" element={<NotFound />} />
+          </Route>
+
+          {/* Dashboard routes (protected, dashboard layout) */}
+          <Route
+            path="/app"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Overview />} />
+            <Route path="nexus" element={<ArchitectureNexus />} />
+            <Route path="drift" element={<CloudDrift />} />
+            <Route path="team" element={<TeamManagement />} />
+            <Route path="api" element={<DeveloperApi />} />
+            <Route path="compliance" element={<SbomCompliance />} />
+          </Route>
         </Routes>
-      </Layout>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
